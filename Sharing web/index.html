@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>텍스트 QR 공유 - URL 파라미터로 간편하게 텍스트 공유</title>
+    <meta
+      name="description"
+      content="텍스트를 URL 파라미터에 담아 공유 링크와 QR 코드로 변환하는 무료 웹 도구입니다. 메모, 안내문, 짧은 메시지를 설치 없이 빠르게 공유할 수 있습니다."
+    />
+    <meta
+      name="keywords"
+      content="텍스트 공유, QR 코드 생성, URL 공유, 메모 공유, 온라인 QR 도구, 텍스트 QR"
+    />
+    <meta name="author" content="Text QR Share" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#176f62" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:title" content="텍스트 QR 공유" />
+    <meta
+      property="og:description"
+      content="텍스트를 입력하면 공유 URL과 QR 코드가 즉시 생성되는 간편한 텍스트 공유 도구입니다."
+    />
+    <meta property="og:site_name" content="텍스트 QR 공유" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="텍스트 QR 공유" />
+    <meta
+      name="twitter:description"
+      content="텍스트를 URL 파라미터와 QR 코드로 빠르게 공유하세요."
+    />
+
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "텍스트 QR 공유",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "All",
+        "description": "텍스트를 URL 파라미터에 담아 공유 링크와 QR 코드로 변환하는 무료 웹 도구입니다.",
+        "inLanguage": "ko-KR",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "KRW"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="텍스트 QR 공유 홈">Text QR Share</a>
+      <nav class="site-nav" aria-label="주요 메뉴">
+        <a href="#tool">공유 도구</a>
+        <a href="#about">사이트 소개</a>
+        <a href="#features">기능 소개</a>
+        <a href="#privacy">개인정보처리방침</a>
+        <a href="#terms">이용약관</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section id="reader" class="reader-view" aria-labelledby="reader-title" hidden>
+        <p class="eyebrow">SHARED TEXT</p>
+        <h1 id="reader-title">공유된 텍스트</h1>
+        <article id="readerText" class="reader-text" aria-label="공유된 텍스트 내용"></article>
+        <div class="buttons reader-actions">
+          <button id="copyReaderButton" type="button">텍스트 복사</button>
+          <a id="editReaderButton" class="button secondary" href="./index.html">새 텍스트 만들기</a>
+        </div>
+        <div id="readerStatus" class="status" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="tool" class="tool-layout" aria-labelledby="page-title">
+        <div class="workspace">
+          <p class="eyebrow">TEXT TO QR</p>
+          <h1 id="page-title">텍스트를 링크와 QR로 공유</h1>
+          <p class="intro">
+            입력한 문장을 URL 파라미터에 담고 QR 코드로 변환합니다. 공유 링크를 열면 같은
+            텍스트가 자동으로 복원되어, 짧은 안내문이나 메모를 빠르게 전달할 수 있습니다.
+          </p>
+
+          <form class="share-form" id="shareForm">
+            <label for="textInput">공유할 텍스트</label>
+            <textarea
+              id="textInput"
+              placeholder="여기에 공유하고 싶은 텍스트를 입력하세요."
+              maxlength="1600"
+            ></textarea>
+            <div class="meta" aria-live="polite">
+              <span id="charCount">0 / 1600</span>
+              <span id="urlSize">링크 준비 중</span>
+            </div>
+
+            <div class="share-row">
+              <div>
+                <label for="shareUrl">공유 URL</label>
+                <input id="shareUrl" type="text" readonly aria-label="공유 URL" />
+              </div>
+              <button id="copyUrlButton" type="button">URL 복사</button>
+            </div>
+
+            <div class="buttons">
+              <button id="copyTextButton" class="secondary" type="button">텍스트 복사</button>
+              <a
+                id="openShareButton"
+                class="button secondary"
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+              >
+                새 창으로 열기
+              </a>
+              <button id="clearButton" class="secondary" type="button">초기화</button>
+            </div>
+            <p id="networkNotice" class="network-notice" hidden>
+              현재 로컬 전용 주소로 열려 있어 핸드폰에서는 QR 링크에 접속할 수 없습니다. 핸드폰
+              테스트는 같은 와이파이에서 PC의 네트워크 주소로 접속하거나, 실제 배포 도메인에서
+              QR을 생성해 주세요.
+            </p>
+            <div id="status" class="status" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+
+        <aside class="preview" aria-label="QR 코드 미리보기">
+          <div class="qr-frame">
+            <canvas id="qrCanvas" aria-label="공유 URL QR 코드"></canvas>
+            <p id="emptyMessage" class="empty">텍스트를 입력하면 QR 코드가 이곳에 표시됩니다.</p>
+          </div>
+          <div class="buttons">
+            <button id="downloadButton" type="button">QR 다운로드</button>
+          </div>
+          <div id="sharedText" class="shared-text"></div>
+        </aside>
+      </section>
+
+      <section id="about" class="content-section" aria-labelledby="about-title">
+        <p class="section-kicker">ABOUT</p>
+        <h2 id="about-title">사이트 소개</h2>
+        <div class="text-grid">
+          <p>
+            텍스트 QR 공유는 별도의 회원가입이나 앱 설치 없이 짧은 텍스트를 공유할 수 있도록
+            만든 웹 도구입니다. 사용자가 입력한 텍스트는 현재 페이지의 URL 파라미터에 담기며,
+            같은 링크를 받은 사람은 브라우저에서 즉시 내용을 확인할 수 있습니다.
+          </p>
+          <p>
+            이 사이트는 안내 문구, 행사장 공지, 임시 메모, 고객 응대 문장, 간단한 체크리스트처럼
+            긴 문서 파일로 만들기에는 가볍지만 다시 타이핑하기에는 번거로운 내용을 빠르게 전달하는
+            상황을 돕기 위해 제작되었습니다.
+          </p>
+          <p>
+            생성된 QR 코드는 공유 URL을 담고 있으므로 인쇄물, 화면 공유, 오프라인 안내판 등에서도
+            활용할 수 있습니다. 수신자는 QR을 스캔하거나 링크를 열기만 하면 동일한 텍스트를 볼 수
+            있습니다.
+          </p>
+        </div>
+      </section>
+
+      <section id="features" class="content-section feature-section" aria-labelledby="features-title">
+        <p class="section-kicker">FEATURES</p>
+        <h2 id="features-title">기능 소개</h2>
+        <div class="feature-grid">
+          <article>
+            <h3>URL 파라미터 기반 공유</h3>
+            <p>
+              입력한 텍스트를 링크에 포함해 공유합니다. 링크를 열면 텍스트가 자동으로 복원되어
+              별도의 저장 과정 없이 내용을 전달할 수 있습니다.
+            </p>
+          </article>
+          <article>
+            <h3>QR 코드 즉시 생성</h3>
+            <p>
+              텍스트를 입력하는 즉시 QR 코드가 생성됩니다. 모바일 기기에서 스캔하거나 다운로드한
+              이미지를 인쇄물과 안내 자료에 사용할 수 있습니다.
+            </p>
+          </article>
+          <article>
+            <h3>복사와 다운로드 지원</h3>
+            <p>
+              공유 URL 복사, 원문 텍스트 복사, QR 이미지 다운로드를 제공해 온라인과 오프라인 공유
+              흐름을 모두 지원합니다.
+            </p>
+          </article>
+          <article>
+            <h3>브라우저 중심 동작</h3>
+            <p>
+              주요 기능은 사용자의 브라우저에서 실행됩니다. 서버 계정이나 별도 로그인 없이 기본
+              공유 기능을 사용할 수 있도록 설계했습니다.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="privacy" class="content-section" aria-labelledby="privacy-title">
+        <p class="section-kicker">PRIVACY POLICY</p>
+        <h2 id="privacy-title">개인정보처리방침</h2>
+        <div class="policy">
+          <h3>1. 수집하는 개인정보</h3>
+          <p>
+            본 사이트는 텍스트 공유 기능 제공을 위해 이름, 이메일, 전화번호와 같은 회원 개인정보를
+            직접 입력받거나 저장하지 않습니다. 사용자가 입력한 공유 텍스트는 URL 파라미터에 포함될
+            수 있으므로 주민등록번호, 계좌번호, 비밀번호, 민감한 개인정보는 입력하지 않는 것을
+            권장합니다.
+          </p>
+
+          <h3>2. 입력 텍스트의 처리 방식</h3>
+          <p>
+            입력된 텍스트는 브라우저에서 공유 URL과 QR 코드로 변환됩니다. URL에 포함된 텍스트는
+            링크를 받은 사람이 볼 수 있으며, 사용자가 링크를 외부에 공유하면 해당 링크를 아는 사람도
+            내용을 확인할 수 있습니다.
+          </p>
+
+          <h3>3. 쿠키와 광고</h3>
+          <p>
+            현재 페이지의 핵심 기능은 쿠키 없이 사용할 수 있습니다. 향후 Google AdSense 등 광고
+            서비스가 적용될 경우 광고 제공, 부정 이용 방지, 통계 측정을 위해 제3자 쿠키 또는 유사한
+            기술이 사용될 수 있습니다. 이 경우 광고 제공 업체의 정책에 따라 맞춤형 광고 설정을
+            관리할 수 있습니다.
+          </p>
+
+          <h3>4. 접속 기록과 통계</h3>
+          <p>
+            안정적인 서비스 운영과 품질 개선을 위해 방문 일시, 브라우저 종류, 기기 정보, 대략적인
+            접속 환경과 같은 비식별 접속 정보가 호스팅 서비스나 분석 도구를 통해 처리될 수 있습니다.
+            이러한 정보는 개인을 직접 식별하기 위한 목적으로 사용하지 않습니다.
+          </p>
+
+          <h3>5. 개인정보 보호를 위한 안내</h3>
+          <p>
+            URL 공유 방식의 특성상 링크에 포함된 내용은 주소창, 브라우저 기록, 메신저 미리보기,
+            공유 대상자에게 노출될 수 있습니다. 중요한 개인정보나 비공개 문서는 이 도구가 아니라
+            접근 권한을 제어할 수 있는 별도의 보안 서비스를 이용해 주세요.
+          </p>
+
+          <h3>6. 정책 변경</h3>
+          <p>
+            본 개인정보처리방침은 서비스 기능, 광고 정책, 관련 법령 변화에 따라 수정될 수 있습니다.
+            중요한 변경 사항이 있는 경우 사이트 내 문구를 통해 안내합니다.
+          </p>
+        </div>
+      </section>
+
+      <section id="terms" class="content-section" aria-labelledby="terms-title">
+        <p class="section-kicker">TERMS OF SERVICE</p>
+        <h2 id="terms-title">이용약관</h2>
+
+        <div class="policy">
+          <h3>1. 서비스 소개</h3>
+          <p>
+            텍스트 QR 공유는 사용자가 입력한 텍스트를 URL 및 QR 코드 형태로 변환하여
+            공유할 수 있도록 제공되는 무료 웹 서비스입니다.
+          </p>
+
+          <h3>2. 이용자의 책임</h3>
+          <p>
+            이용자는 본 서비스를 이용하여 생성하거나 공유한 텍스트 및 링크에 대한
+            책임을 부담합니다.
+          </p>
+          <ul>
+            <li>법령을 위반하는 정보</li>
+            <li>타인의 개인정보를 포함한 정보</li>
+            <li>저작권 또는 지식재산권을 침해하는 정보</li>
+            <li>명예훼손, 차별, 혐오 표현</li>
+            <li>악성코드, 피싱 또는 사기와 관련된 정보</li>
+          </ul>
+
+          <h3>3. 공유 링크 사용 시 주의사항</h3>
+          <p>
+            입력된 텍스트는 URL에 포함되어 공유될 수 있습니다.
+            URL을 알고 있는 사람은 누구나 해당 내용을 확인할 수 있으므로
+            비밀번호, 금융정보, 주민등록번호 등 민감한 정보의 입력을 권장하지 않습니다.
+          </p>
+
+          <h3>4. 서비스 제공 및 변경</h3>
+          <p>
+            운영자는 서비스의 품질 향상 또는 운영상의 이유로 서비스의 일부 또는 전부를
+            변경, 중단 또는 종료할 수 있습니다.
+          </p>
+
+          <h3>5. 면책조항</h3>
+          <p>
+            운영자는 이용자가 생성하거나 공유한 콘텐츠의 정확성, 적법성 또는
+            신뢰성을 보증하지 않습니다.
+          </p>
+          <p>
+            이용자가 본 서비스를 통해 공유한 정보로 인해 발생하는 손해, 분쟁 또는
+            기타 문제에 대해 운영자는 책임을 지지 않습니다.
+          </p>
+
+          <h3>6. 광고 및 외부 서비스</h3>
+          <p>
+            본 서비스에는 Google AdSense 등 제3자 광고 서비스가 포함될 수 있습니다.
+            광고 제공 과정에서 쿠키 또는 유사 기술이 사용될 수 있으며,
+            자세한 내용은 개인정보처리방침을 따릅니다.
+          </p>
+
+          <h3>7. 약관 변경</h3>
+          <p>
+            운영자는 필요한 경우 본 이용약관을 변경할 수 있으며,
+            변경된 약관은 사이트에 게시한 시점부터 효력이 발생합니다.
+          </p>
+
+          <h3>8. 문의</h3>
+          <p>
+            서비스 관련 문의는 운영자가 제공하는 연락처를 통해 접수할 수 있습니다.
+          </p>
+        </div>
+      </section>
+
+      <section class="content-section faq-section" aria-labelledby="faq-title">
+        <p class="section-kicker">FAQ</p>
+        <h2 id="faq-title">자주 묻는 질문</h2>
+        <details>
+          <summary>입력한 텍스트가 서버에 저장되나요?</summary>
+          <p>
+            기본 기능은 브라우저에서 동작하며, 입력한 텍스트를 별도 데이터베이스에 저장하지 않습니다.
+            다만 공유 링크 자체에 텍스트가 포함되므로 링크를 공개하면 내용도 함께 공개됩니다.
+          </p>
+        </details>
+        <details>
+          <summary>긴 텍스트도 QR 코드로 만들 수 있나요?</summary>
+          <p>
+            너무 긴 텍스트는 QR 코드가 복잡해져 스캔 품질이 낮아질 수 있습니다. 현재 입력 길이는
+            1,600자로 제한되어 있으며, 중요한 안내는 핵심 문장 위주로 짧게 작성하는 것이 좋습니다.
+          </p>
+        </details>
+        <details>
+          <summary>상업적 용도로 사용해도 되나요?</summary>
+          <p>
+            행사 안내, 매장 공지, 교육 자료, 고객 안내 등 일반적인 공유 목적으로 자유롭게 사용할 수
+            있습니다. 단, 불법 정보나 타인의 권리를 침해하는 내용 공유에는 사용할 수 없습니다.
+          </p>
+        </details>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="currentYear"></span> Text QR Share. 간편한 텍스트 URL 공유 도구.</p>
+      <p>문의: sgkimheo@gmail.com</p>
+    </footer>
+
+    <script src="./assets/js/qr-code.js" defer></script>
+    <script src="./assets/js/app.js" defer></script>
+  </body>
+</html>
